@@ -17,6 +17,7 @@ public class NodeStartupTest {
 
     @Test
     public void contextLoads() {
+        //проверка, что проект с такой конфигурацией в принципе может собраться и запуститься
     }
 
 }

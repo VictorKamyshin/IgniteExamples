@@ -18,8 +18,8 @@ public abstract class AbstractIgniteCacheTest {
 
     @Before
     public void beforeCacheClearing(){
+        //очистит все кеши перед запуском тестов
         ignite.destroyCaches(ignite.cacheNames());
     }
-    //очистит все кеши перед запуском тестов
 
 }

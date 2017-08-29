@@ -17,21 +17,13 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(value={"com.example.configuration"})
 public class NodeApplication {
     public static void main(String[] args){
-        ApplicationContext context = SpringApplication.run(NodeApplication.class, args);
-        try {
-            Object obj =  context.getBean("ignite");
-            System.out.println("ignite name = " + obj.getClass().getCanonicalName());
-        } catch (Exception e){
-            System.out.println("Exception occurred");
-            e.printStackTrace();
-        }
+        SpringApplication.run(NodeApplication.class, args);
     }
 
     @Bean
     public Ignite ignite(IgniteConfiguration configuration){
-        return Ignition.getOrStart(configuration);
         //SpringTransactionManager сам стартует ноду
+        return Ignition.getOrStart(configuration);
     }
-
 
 }

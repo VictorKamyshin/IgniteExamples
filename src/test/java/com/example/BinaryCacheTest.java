@@ -26,11 +26,10 @@ public class BinaryCacheTest {
 
     @Before
     public void beforeTest(){
-        ignite.active(true);
         //указывает ноде играйта, что не надо ждать, пока загрузятся остальные ноды кластера
+        ignite.active(true);
     }
 
-    @Test
     public void putInPersistentStore(){
         IgniteCache<Integer, SomeClass> cache1 = ignite.getOrCreateCache("cache1");
         Set<Integer> keySet = getKeys();
@@ -39,54 +38,60 @@ public class BinaryCacheTest {
             tmp.setInnerObj(new InnerObjectClass(3+key, "composed string" + key));
             cache1.put(key,tmp);
         }
-        getAllFromCacheBinary(cache1.withKeepBinary(), keySet);
     }
 
     @Test
     public void modificationBinaryCacheContent(){
+        putInPersistentStore();
+
         IgniteCache<Integer, BinaryObject> cache1 = ignite.getOrCreateCache("cache1").withKeepBinary();
         Set<Integer> keySet = getKeys();
 
         cache1.invokeAll(keySet, (MutableEntry<Integer,BinaryObject> entry, Object... objects) -> {
+
                 //сами по себе бинарные объекты игнайта - Immutable
                 //но можно получить билдер с копией исходного объекта, который уже можно менять
                 BinaryObjectBuilder builder = entry.getValue().toBuilder();
 
-                BinaryObject innerObj = entry.getValue().field("composedObj");
                 //вложенный объект так же будет бинарным
+                BinaryObject innerObj = entry.getValue().field("composedObj");
 
                 BinaryObjectBuilder innerBuilder = innerObj.toBuilder();
 
                 innerBuilder.setField("string","newStringValue2");
                 innerBuilder.setField("integer",4+entry.getKey());
+
                 //значения полей и сами поля можно добавлять/удалять в рантайме, не перезапуская ноды с кешом
                 InnerObjectClass tmp = innerBuilder.build().deserialize();
 
-                System.out.println("Value type is "+innerObj.type().typeName());
                 //есть что-то в духе рефлекшна, то есть можно узнать, к какому классу принадлежал
                 //бинарный объект до того, как стать бинарным, названия всех его полей и т.д.
+                System.out.println("Value type is "+innerObj.type().typeName());
+
                 builder.setField("composedObj",(InnerObjectClass)innerBuilder.build().deserialize());
                 builder.setField("integerField",12);
-                entry.setValue(builder.build());
-                return null;
+
                 //в принципе, на место значения можно подсунуть бинарный объект,
                 //который не коответсвует value-классу, но десериализовать его потом не получится
                 //ни в объект, классом которого он был, ни в объект, который, по идее, хранится в кеше
+                entry.setValue(builder.build());
+                return null;
+
             });
+
         getAllFromCacheBinary(cache1, keySet);
     }
 
     public void getAllFromCacheBinary(IgniteCache<Integer,BinaryObject> cache1, Set<Integer> keySet){
         for(Integer key:keySet){
             BinaryObject bo = cache1.get(key);
-            SomeClass tmp = bo.deserialize();
-            tmp.printlnContent();
 
-            //System.out.println(">>>  "+(String)bo.toBuilder().getField("testField"));
             //Можно не десериализовывая объект достать какие-то его поля
             //Даже если это объект другого класса, чем предполагается хранить к кеше
             //Если при десериализации у объекта присутсвуют "лишние" поля, то они будут проигнорированны
             //Бинарная сериализация игнорирует регистр в названиях полей - https://apacheignite.readme.io/docs/binary-marshaller
+            SomeClass tmp = bo.deserialize();
+            tmp.printlnContent();
         }
     }
 
@@ -96,6 +101,5 @@ public class BinaryCacheTest {
         keySet.add(4);
         return keySet;
     }
-
 
 }

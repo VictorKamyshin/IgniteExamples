@@ -1,10 +1,15 @@
 package com.example.util;
 
+/**
+*  Допустим, был какой-то очень полезный класс
+* А потом мы захотели сделать его еще более полезным, добавив поле и изменив метод для вывода содержимого
+* Но объекты этого класса уже лежат в кеше
+* Не проблема - уже имеющиеся объекты можно изменить и кеш будет не против
+ */
 public class SomeClass {
+
     private Integer integerField;
-
     private String stringField;
-
     private InnerObjectClass composedObj;
 
     public SomeClass(Integer integerField, String stringField){
@@ -24,17 +29,6 @@ public class SomeClass {
         this.composedObj = composedObj;
     }
 
-    public void printlnContent(){
-        System.out.println("Integer field = " + integerField + " and stringField = " + stringField);
-        composedObj.showContent();
-    }
-
-    //Допустим, был какой-то очень полезный класс
-    //----------------------------------------------------------------------
-    //А потом мы захотели сделать его еще более полезным, добавив поле и изменив метод для вывода содержимого
-    //Но объекты этого класса уже лежат в кеше
-    //Не проблема - уже имеющиеся объекты можно изменить и кеш будет не против
-    /*
     private String newField;
 
     public void printlnContent(){
@@ -44,6 +38,6 @@ public class SomeClass {
 
     public void setNewField(String newField) {
         this.newField = newField;
-    } */
+    }
 
 }

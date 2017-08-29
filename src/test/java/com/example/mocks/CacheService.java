@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * просто бин для демонстрации работы аннотаций
+ */
 public class CacheService {
 
-    //просто бин для демонстрации работы аннотаций
 
     @Autowired
     private Ignite ignite;

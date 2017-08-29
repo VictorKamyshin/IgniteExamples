@@ -14,6 +14,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.sharedfs.TcpDiscoverySharedF
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.transactions.TransactionConcurrency;
 import org.apache.ignite.transactions.spring.SpringTransactionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -26,7 +27,11 @@ import java.util.Arrays;
 @EnableTransactionManagement
 public class IgniteSettings {
 
-    static String STORE_PATH = "/home/victor/IdeaProjects/PersistentStoreNode/work";
+
+    //директория, в которой будут храниться файлы на диске
+    @Value("work")
+    private String path;
+
 
 //    @Bean
     public TransactionAspect transactionAspect(){
@@ -49,12 +54,14 @@ public class IgniteSettings {
         //просто "легкая" конфигурация для тестов
         IgniteConfiguration configuration = new IgniteConfiguration();
 
-        System.setProperty(IgniteSystemProperties.IGNITE_ATOMIC_CACHE_DELETE_HISTORY_SIZE,"0"); //?
         //отключает ведение журнала удаленных элементов в кеше или что-то такое
         //судя по советам на форуме - должно сократить количество запусков сборщика мусора
-        TcpDiscoverySharedFsIpFinder ipFinder = new TcpDiscoverySharedFsIpFinder();
+        System.setProperty(IgniteSystemProperties.IGNITE_ATOMIC_CACHE_DELETE_HISTORY_SIZE,"0");
+
         //простой ipFinder, который не нагружает ноду поиском других нод
         //другие ноды смогут ее увидеть, но она сама особо пристально никого искать не будет
+        TcpDiscoverySharedFsIpFinder ipFinder = new TcpDiscoverySharedFsIpFinder();
+
         TcpDiscoverySpi spi = new TcpDiscoverySpi();
 
         spi.setIpFinder(ipFinder);
@@ -79,13 +86,9 @@ public class IgniteSettings {
 
         configuration.setDiscoverySpi(spi);
 
-        //configuration.setGridLogger(nullLogger()); //Ignite выдает кучу логов, убрать их
-        //с помощью переменной окружения IGNITION_QUIET=true не получилось
-        //но получилось передать ему логгер, который ничего не пишет
-
         PersistentStoreConfiguration pscfg = new PersistentStoreConfiguration();
 
-        pscfg.setPersistentStorePath(STORE_PATH);
+        pscfg.setPersistentStorePath(path);
 
         configuration.setPersistentStoreConfiguration(pscfg);
 
