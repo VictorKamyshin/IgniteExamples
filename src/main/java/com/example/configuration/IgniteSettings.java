@@ -49,7 +49,7 @@ public class IgniteSettings {
         return transactionManager;
     }
 
-//    @Bean
+    @Bean
     public IgniteConfiguration igniteConfiguration(){
         //просто "легкая" конфигурация для тестов
         IgniteConfiguration configuration = new IgniteConfiguration();
@@ -71,7 +71,7 @@ public class IgniteSettings {
         return configuration;
     }
 
-    @Bean
+//    @Bean
     public IgniteConfiguration persistentConfiguration(){
         //конфигурация с сохранением данных кеша на диск
         IgniteConfiguration configuration = new IgniteConfiguration();
