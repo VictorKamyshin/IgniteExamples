@@ -101,7 +101,7 @@ public class BinaryCacheTest extends AbstractIgniteCacheTest{
             SomeClass tmp = bo.deserialize();
             tmp.printlnContent();
             //убеждаемся, что в поле, не имеющем сеттеров появилось добавленное через кеш значение
-            assert(tmp.getNewField().equals("newFieldValue"));
+            assert("newFieldValue".equals(tmp.getNewField()));
         }
     }
 
