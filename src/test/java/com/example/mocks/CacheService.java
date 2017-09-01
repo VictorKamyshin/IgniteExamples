@@ -25,6 +25,8 @@ public class CacheService {
     public void createCache(String cacheName){
         CacheConfiguration<Integer, String> cfg = new CacheConfiguration<>(cacheName);
 
+        cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+
         cache = ignite.getOrCreateCache(cfg);
     }
 
@@ -38,7 +40,7 @@ public class CacheService {
     @Transactional(rollbackFor = Exception.class)
     public void putWithException(Integer key, String value) throws Exception{
         cache.put(key, value);
-        throw new Exception("oops");
+        throw new RuntimeException("oops");
     }
 
     public String get(Integer key){
